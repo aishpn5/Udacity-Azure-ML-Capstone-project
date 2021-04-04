@@ -1,13 +1,8 @@
-# Capstone Project - Udacity Azure Machine Learning Engineer
+# Udacity Machine Learning Engineer with Microsoft Azure - Capstone Project
 
-This is the final project which is the Capstone in the Udacity Azure Machine Learning Engineer Nanodegree. This project requires the expertise in the Azure Cloud Machine learning technologies. This acts as the final step in practically implementing the knowledge that I have gathered from the nanodegree.
+This is the final project in the Udacity Azure Machine Learning Engineer Nanodegree. In this project, we created two models: one using Automated ML and one customized model whose hyperparameters are tuned using HyperDrive. We then compare the performance of both the models and deploy the best performing model.
 
-## Project Set Up and Installation
-1. This project requires the creation on compute instance to run Jupyter Notebook & compute cluster to run the experiments.
-2. Dataset needs to be manually selected. 
-3. Two experiments were run using Auto-ML & HyperDrive
-4. The best model that gave good metrics was deployed and consumed.
-
+Architectural Diagram![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/Architectural%20Diagram.png)
 
 ## Dataset
 Name: heart_failure_clinical_records_dataset.csv
@@ -15,11 +10,11 @@ Name: heart_failure_clinical_records_dataset.csv
 ### Overview
 I have downloaded the dataset from "UC Irvine Machine Learning Repository"
 
-Heart failure (HF) occurs when the heart cannot pump enough blood to meet the needs of the body.Available electronic medical records of patients quantify symptoms, body features, and clinical laboratory test values, which can be used to perform biostatistics analysis aimed at highlighting patterns and correlations otherwise undetectable by medical doctors. Machine learning, in particular, can predict patients’ survival from their data and can individuate the most important features among those included in their medical records.
+Heart failure (HF) occurs when the heart cannot pump enough blood to meet the needs of the body. Available electronic medical records of patients quantify symptoms, body features, and clinical laboratory test values, which can be used to perform biostatistics analysis aimed at highlighting patterns and correlations otherwise undetectable by medical doctors. Machine learning, in particular, can predict patients’ survival from their data and can individuate the most important features among those included in their medical records.
 
 ### Task
-Task: This is a classification problem where in I'm trying to predict if the symptons used in the features will cause death in the patient.(Yes or No)
-The target variable is "death event"
+Task: This is a classification problem where in I'm trying to predict if the symptoms used in the features will cause death in the patient.(Yes or No)
+The target variable is "death event".
 
 Thirteen (13) clinical features:
 
@@ -35,15 +30,11 @@ Thirteen (13) clinical features:
 - serum sodium: level of serum sodium in the blood (mEq/L)
 - smoking: if the patient smokes or not (boolean)
 - time: follow-up period (days)
-- [target] death event: if the patient deceased during the follow-up period (boolean)
-
-### Access
-
-I'm accessing the data from the direct link to the UCI repository in the notebook where in I import the data using TabularDataset library in the  Azure. 
+- death event: if the patient deceased during the follow-up period (boolean)
 
 ## Automated ML
-*TODO*: Give an overview of the `automl` settings and configuration you used for this experiment
-1. I created a Compute Instance with specification "STANDARD_D3_V2" to run Jupyter Notebook in Azure.
+
+1. I created a Compute Instance with specification "STANDARD_D2_V2" to run Jupyter Notebook in Azure.
 2. I have imported the dataset using TabularDataset library.
 3. The setting that I used for Auto-ML were 
 * "experiment_timeout_minutes", 
@@ -53,32 +44,19 @@ I'm accessing the data from the direct link to the UCI repository in the noteboo
 
 automl_settings = {"primary_metric":"accuracy", "experiment_timeout_minutes":30, "enable_early_stopping":True, "n_cross_validations":3,"max_concurrent_iterations": 4}
 
-4. automl_config = AutoMLConfig(compute_target = compute_target, task = 'classification', training_data = train, label_column_name = 'DEATH_EVENT',**automl_settings)
+4. automl_config = AutoMLConfig(compute_target = compute_target, task = 'classification', training_data = train, label_column_name = 'DEATH_EVENT',blocked_models=['XGBoostClassifier'],**automl_settings)
 
 ### Results
 
-1. The best performing Algorithm was "VotingEnsemble" with an accuracy of 87.48%
-![](screenshots/automl-bestModel.png)
+1. The best performing Algorithm was "VotingEnsemble" with an accuracy of 86.61%
+![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/automl%20best%20model.png)
 
-
-2. Some of the other parameters as shown in the screenshot are the following:
-* precision_score_micro 0.8748348348348348
-* recall_score_macro 0.8428914238803412
-* norm_macro_recall 0.6857828477606823
-* AUC_micro 0.9212086031977925
-
-3. Run Details 
-![](screenshots/automl-runDetails.png)
-
-4. The list of the Algorithms that ran are shown in the below screenshot
-![](screenshots/automl-models.png)
-
-5. I can still improve the model performance by increasing the runs, capturing more data, including more features.
-
+2. Run Details 
+![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/automl%20run%20details.png)
 
 ## Hyperparameter Tuning
 
-1. I have used LogisticRegression for this experiment since it is easily understandable and works well with Classification problems.
+1. I have used LogisticRegression for this experiment .
 2. I have used RandomParameterSampling with 3 parameters for this model:
 solver
 max_iter
@@ -92,36 +70,25 @@ RandomParameterSampling({'C': choice(0.01, 0.1, 1, 10, 100),
 
 
 ### Results
-*TODO*: What are the results you got with your model? What were the parameters of the model? How could you have improved it?
-1. The best performing accuracy was 92% 
+
+1. The best performing accuracy was 89.33% 
 2. The parameters of the model are:
 ['--C', '0.1', '--max_iter', '50', '--solver', 'liblinear']
 3. I could increase the number of parameter ranges that I have used.
 I can even change the method of sampling used for the execution to run faster or slower and find good accurate results.
 
-Best Model Screenshot:
-![](screenshots/hyper-bestModel.png)
+Best Model :
+![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/hyperdrive%20best%20model.png)
 
-Run Details Screenshot:
-![](/screenshots/hyper-runDetails.png)
+Run Details:
+![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/hyperdrive%20run%20details.png)
 
 ## Model Deployment
-*TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
-Since the HyperDrive experiment gave me best metrics i.e Accuracy of 92%, I went ahead and deployed this model. 
 
-Deployed Service Screenshot:
-![](/screenshots/hyper-endpoint1.png)
+Since the HyperDrive experiment gave me best metrics i.e Accuracy of 89.33%, I deployed this model. 
 
-Sample input that I provided for the endpoint to get the response:
-![](/screenshots/hyper-endpoint.png)
-The endpoint needs to receive the sample in the form of JSON, I have displayed the code and sample in the above screenshot for clarity.
+Deployed Service :
+![](https://github.com/aishpn5/Udacity-Azure-ML-Capstone-project/blob/main/Images/endpoint%20active.png)
 
 ## Screen Recording
-Link: https://youtu.be/sNhuO7utmf0 
-
-The sample request to the endpoint is shown at the end of the video.
-
- Remember that the screencast should demonstrate:
-- A working model 
-- Demo of the deployed  model
-- Demo of a sample request sent to the endpoint and its response
+Link: https://youtu.be/7vKovlEx6jc
