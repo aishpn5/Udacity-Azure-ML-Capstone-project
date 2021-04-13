@@ -1,4 +1,4 @@
-# Udacity Machine Learning Engineer with Microsoft Azure - Capstone Project
+# Machine Learning Engineer with Microsoft Azure - Capstone Project
 
 This is the final project in the Udacity Azure Machine Learning Engineer Nanodegree. In this project, we created two models: one using Automated ML and one customized model whose hyperparameters are tuned using HyperDrive. We then compare the performance of both the models and deploy the best performing model.
 
